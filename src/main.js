@@ -15,6 +15,8 @@ import { updateBalanceDisplay } from './ui/balance.js';
 import { placeBet } from './betting/index.js';
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
+import { player, gameState } from './state/player.js';
+import { displayMessage } from './ui/message.js';
 
 const { scene, camera, renderer } = setupSceneAndRenderer();
 const world = setupPhysicsWorld();
@@ -28,6 +30,11 @@ let dice = [];
 let waitingForRollToSettle = false;
 
 function spawnDice() {
+  if (gameState.phase === 'comeOut' && player.currentBet === 0) {
+    displayMessage('Place a line bet before rolling.');
+    return;
+  }
+
   clearDice();
 
   const d1 = createDie(new THREE.Vector3(playerX - 0.3, 1.2, throwZ));
@@ -72,7 +79,6 @@ function animate() {
 
   if (waitingForRollToSettle && checkRoll(dice)) {
     waitingForRollToSettle = false;
-    clearDice();
   }
 
   renderer.render(scene, camera);
