@@ -65,6 +65,8 @@ export function placeFieldBet(amount) {
   if (player.balance < amount) return;
   player.balance -= amount;
   player.fieldBet += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
 }
 
 export function placeOdds(type, point, amount) {
@@ -118,11 +120,13 @@ export function updateAllBetChips() {
   }
   player.comeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);
-    if (total > 0 && slots.come) addChips(total, slots.come);
+    const key = b.point ? `come${b.point}` : 'come';
+    if (total > 0 && slots[key]) addChips(total, slots[key]);
   });
   player.dontComeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);
-    if (total > 0 && slots.dontCome) addChips(total, slots.dontCome);
+    const key = b.point ? `dontCome${b.point}` : 'dontCome';
+    if (total > 0 && slots[key]) addChips(total, slots[key]);
   });
   Object.entries(player.hardways).forEach(([n, amt]) => {
     if (amt > 0 && slots[`hard${n}`]) {

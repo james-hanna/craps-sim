@@ -26,16 +26,47 @@ export function setupUI({
   rollBtn.onclick = onRollDice;
   uiPanel.appendChild(rollBtn);
 
-  // Line bet chips
-  const chipContainer = document.createElement('div');
-  chipContainer.id = 'chip-container';
-  uiPanel.appendChild(chipContainer);
+  // Chip denomination selector
+  let selected = 5;
+  const denom = document.createElement('div');
+  denom.id = 'chip-container';
+  uiPanel.appendChild(denom);
+  [1,5,25,100].forEach(val => {
+    const btn = document.createElement('button');
+    btn.textContent = `$${val}`;
+    if (val === selected) btn.classList.add('active');
+    btn.onclick = () => {
+      selected = val;
+      Array.from(denom.children).forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    denom.appendChild(btn);
+  });
 
-  [5, 10, 25, 100].forEach(amount => {
-    const chip = document.createElement('button');
-    chip.textContent = `Pass $${amount}`;
-    chip.onclick = () => onLineBet(amount);
-    chipContainer.appendChild(chip);
+  const makeBtn = (label, handler) => {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.onclick = () => handler(selected);
+    uiPanel.appendChild(b);
+  };
+
+  makeBtn('Pass Line', onLineBet);
+  makeBtn("Don't Pass", onDontPass);
+  makeBtn('Come', onComeBet);
+  makeBtn("Don't Come", onDontCome);
+  makeBtn('Field', onFieldBet);
+  makeBtn('Pass Odds', amt => onOddsLine(amt));
+
+  // Hardway buttons
+  const hardContainer = document.createElement('div');
+  hardContainer.id = 'hard-container';
+  uiPanel.appendChild(hardContainer);
+  [4,6,8,10].forEach(n => {
+    const btn = document.createElement('button');
+    btn.textContent = `Hard ${n}`;
+    btn.onclick = () => onHardway(n, selected);
+    hardContainer.appendChild(btn);
+
   });
 
   // Come bet button

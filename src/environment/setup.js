@@ -67,15 +67,25 @@ function createCrapsLayoutTexture() {
 
   const areas = {
     passLine: { x: 50, y: canvas.height - 180, w: canvas.width - 100, h: 120, label: 'PASS LINE' },
+    lineOdds: { x: 50, y: canvas.height - 220, w: canvas.width - 100, h: 30, label: 'ODDS' },
     dontPass: { x: 50, y: canvas.height - 260, w: canvas.width - 100, h: 60, label: "DON'T PASS" },
+    field: { x: 50, y: canvas.height - 380, w: canvas.width - 100, h: 80, label: 'FIELD' },
     come: { x: 50, y: canvas.height - 520, w: canvas.width - 100, h: 120, label: 'COME' },
     dontCome: { x: 50, y: canvas.height - 600, w: canvas.width - 100, h: 60, label: "DON'T COME" },
-    field: { x: 50, y: canvas.height - 380, w: canvas.width - 100, h: 80, label: 'FIELD' },
+
     hard4: { x: 150, y: 200, w: 140, h: 80, label: 'HARD 4' },
     hard6: { x: 320, y: 200, w: 140, h: 80, label: 'HARD 6' },
     hard8: { x: 490, y: 200, w: 140, h: 80, label: 'HARD 8' },
     hard10: { x: 660, y: 200, w: 140, h: 80, label: 'HARD 10' }
   };
+
+  const points = [4, 5, 6, 8, 9, 10];
+  points.forEach((p, i) => {
+    const baseX = 60 + i * 140;
+    areas[`come${p}`] = { x: baseX, y: canvas.height / 2 - 40, w: 120, h: 60, label: `${p}` };
+    areas[`dontCome${p}`] = { x: baseX, y: canvas.height / 2 - 110, w: 120, h: 60, label: `DC ${p}` };
+  });
+
 
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
@@ -99,7 +109,7 @@ export function setupTableAndWalls(scene, world) {
   const tableLength = 36;
   const tableWidth = 85;
   const tableHeight = 1;
-  
+
   const { texture: layoutTex, areas, size } = createCrapsLayoutTexture();
   layoutTex.wrapS = THREE.RepeatWrapping;
   layoutTex.wrapT = THREE.RepeatWrapping;
@@ -147,7 +157,8 @@ export function setupTableAndWalls(scene, world) {
   }
 
   const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
-  const mapZ = cY => (0.5 - cY / size.height) * tableWidth;
+  const mapZ = cY => (cY / size.height - 0.5) * tableWidth;
+
   const chipSlots = {};
   for (const [key, a] of Object.entries(areas)) {
     const cx = a.x + a.w / 2;

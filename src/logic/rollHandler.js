@@ -141,7 +141,6 @@ function resolveBets(r1, r2, total) {
         gameState.canBet = true;
         clearChips();
         updateAllBetChips();
-
       } else if ([2, 3, 12].includes(total)) {
         if (player.lineBet > 0) {
           messages.push('Pass line loses.');

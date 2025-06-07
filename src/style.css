@@ -53,6 +53,10 @@ button:hover {
   gap: 10px;
 }
 
+.active {
+  background-color: #777;
+}
+
 #hard-container {
   display: flex;
   gap: 6px;
