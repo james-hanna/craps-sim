@@ -40,7 +40,7 @@ export function spawnDice(scene, world, playerX, throwZ) {
   const d2 = createDie(new THREE.Vector3(playerX + 0.3, 1.2, throwZ));
 
   dice.push(d1, d2);
-  scene.add(d1.mesh, d2.mesh);
+  scene.add(d1.mesh);
   scene.add(d2.mesh);
   world.addBody(d1.body);
   world.addBody(d2.body);
