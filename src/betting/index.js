@@ -115,6 +115,7 @@ export function placeHardway(number, amount) {
   if (player.balance < amount) return;
   player.balance -= amount;
   player.hardways[number] += amount;
+
   updateBalanceDisplay();
   updateAllBetChips();
 }
@@ -181,6 +182,7 @@ function createChipMesh(amount) {
   const chipHeight = 0.3;
   const radius = 0.65;
   const geometry = new THREE.CylinderGeometry(radius, radius, chipHeight, 32);
+
   const colorMap = {
     1: 0xffffff,
     5: 0xff0000,
