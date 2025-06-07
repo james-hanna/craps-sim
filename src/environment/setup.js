@@ -81,21 +81,21 @@ function createCrapsLayoutTexture() {
   const spacingX = 80; // add more horizontal gap between boxes
   const startX = (canvas.width - (comeW * 3 + spacingX * 2)) / 2;
   const baseY = 760; // move rows slightly upward
-  const rowSpacing = 320; // a bit more vertical spacing
+  const rowSpacing = 300; // a bit more vertical spacing
 
   points.forEach((p, i) => {
     const row = Math.floor(i / 3);
     const col = i % 3;
     const x = startX + col * (comeW + spacingX);
     const comeY = baseY + row * rowSpacing;
-    const dontY = comeY - dontH - 40; // extra gap from don't come box
+    const dontY = comeY - dontH;
 
     areas[`come${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
     areas[`dontCome${p}`] = { x, y: dontY, w: comeW, h: dontH, label: `DC ${p}` };
     areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
   });
 
-  const hwW = 200;
+  const hwW = 300;
   const hwH = 200;
   const hwSpacing = 60;
   const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
