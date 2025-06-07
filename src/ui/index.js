@@ -1,6 +1,8 @@
 import { messagePanel, setupMessagePanel } from './message';
 import { initializeBalanceDisplay } from './balance';
 
+let selectedValue = 5;
+
 let uiPanel;
 
 export function setupUI({
@@ -28,7 +30,7 @@ export function setupUI({
   uiPanel.appendChild(rollBtn);
 
   // Chip denomination selector
-  let selected = 5;
+  let selected = selectedValue;
   const denom = document.createElement('div');
   denom.id = 'chip-container';
   uiPanel.appendChild(denom);
@@ -38,6 +40,7 @@ export function setupUI({
     if (val === selected) btn.classList.add('active');
     btn.onclick = () => {
       selected = val;
+      selectedValue = val;
       Array.from(denom.children).forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
     };
@@ -85,4 +88,7 @@ export function setupUI({
 }
 
 export { setupMessagePanel, displayMessage, messagePanel } from './message.js';
+export function getSelectedDenomination() {
+  return selectedValue;
+}
 

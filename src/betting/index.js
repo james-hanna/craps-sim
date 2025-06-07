@@ -236,6 +236,67 @@ export function handleChipClick(mesh) {
   updateAllBetChips();
 }
 
+export function decreaseBetForBox(key, amount) {
+  if (!amount || amount <= 0) return;
+  let info = null;
+  switch (key) {
+    case 'passLine':
+      info = { kind: 'passLine' };
+      amount = Math.min(amount, player.lineBet);
+      break;
+    case 'lineOdds':
+      info = { kind: 'lineOdds' };
+      amount = Math.min(amount, player.lineOdds);
+      break;
+    case 'dontPass':
+      info = { kind: 'dontPass' };
+      amount = Math.min(amount, player.dontPass);
+      break;
+    case 'field':
+      info = { kind: 'field' };
+      amount = Math.min(amount, player.fieldBet);
+      break;
+    default:
+      break;
+  }
+
+  if (!info && key.startsWith('place')) {
+    const point = Number(key.replace('place', ''));
+    info = { kind: 'place', point };
+    amount = Math.min(amount, player.placeBets[point]);
+  }
+
+  if (!info && key.startsWith('hard')) {
+    const point = Number(key.replace('hard', ''));
+    info = { kind: 'hardway', point };
+    amount = Math.min(amount, player.hardways[point]);
+  }
+
+  if (!info && key.startsWith('come')) {
+    const point = key === 'come' ? null : Number(key.replace('come', ''));
+    const bet = player.comeBets.find(b => b.point === point);
+    if (bet) {
+      info = { kind: 'come', bet };
+      amount = Math.min(amount, (bet.amount + (bet.odds || 0)));
+    }
+  }
+
+  if (!info && key.startsWith('dontCome')) {
+    const point = key === 'dontCome' ? null : Number(key.replace('dontCome', ''));
+    const bet = player.dontComeBets.find(b => b.point === point);
+    if (bet) {
+      info = { kind: 'dontCome', bet };
+      amount = Math.min(amount, (bet.amount + (bet.odds || 0)));
+    }
+  }
+
+  if (!info || amount <= 0) return;
+
+  removeChipFromState({ value: amount, info });
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
 function removeChipFromState(chip) {
   const { value, info } = chip;
   player.balance += value;

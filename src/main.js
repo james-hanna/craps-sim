@@ -22,17 +22,28 @@ import {
   placeHardway,
   placeNumberBet
 } from './betting/index.js';
-import { setupUI } from './ui/index.js';
-import { getChipMeshes, handleChipClick, updateChipMeshes } from './betting/index.js';
+import { setupUI, getSelectedDenomination } from './ui/index.js';
+import { getChipMeshes, handleChipClick, updateChipMeshes, decreaseBetForBox } from './betting/index.js';
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
 import { displayMessage } from './ui/message.js';
 
 const { scene, camera, renderer } = setupSceneAndRenderer();
 const world = setupPhysicsWorld();
-const { tableWidth, chipSlots } = setupTableAndWalls(scene, world);
+const { tableWidth, chipSlots, betAreas } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
 const controls = initControls(camera, renderer);
+
+const betBoxMeshes = [];
+for (const [key, area] of Object.entries(betAreas)) {
+  const geo = new THREE.BoxGeometry(area.width, 0.2, area.depth);
+  const mat = new THREE.MeshBasicMaterial({ visible: false });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(area.x, 0.1, area.z);
+  mesh.userData.betKey = key;
+  scene.add(mesh);
+  betBoxMeshes.push(mesh);
+}
 
 initBetting(scene, chipSlots, world);
 setupUI({
@@ -49,7 +60,7 @@ setupUI({
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-const clickInfo = { x: 0, y: 0, object: null, down: false };
+const clickInfo = { x: 0, y: 0, object: null, kind: null, down: false };
 
 function onPointerDown(event) {
   if (event.button !== 0) return;
@@ -60,10 +71,15 @@ function onPointerDown(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
-  const intersect = raycaster.intersectObjects(getChipMeshes(), true);
-  clickInfo.object = intersect.length ? intersect[0].object : null;
-  if (clickInfo.object) {
+  let intersect = raycaster.intersectObjects(getChipMeshes(), true);
+  if (intersect.length) {
+    clickInfo.object = intersect[0].object;
+    clickInfo.kind = 'chip';
     controls.enabled = false;
+  } else {
+    intersect = raycaster.intersectObjects(betBoxMeshes, true);
+    clickInfo.object = intersect.length ? intersect[0].object : null;
+    clickInfo.kind = clickInfo.object ? 'box' : null;
   }
 }
 
@@ -74,9 +90,16 @@ function onPointerUp(event) {
   const dx = Math.abs(event.clientX - clickInfo.x);
   const dy = Math.abs(event.clientY - clickInfo.y);
   if (dx < 4 && dy < 4 && clickInfo.object) {
-    handleChipClick(clickInfo.object);
+    if (clickInfo.kind === 'chip') {
+      handleChipClick(clickInfo.object);
+    } else if (clickInfo.kind === 'box') {
+      const denom = getSelectedDenomination();
+      const key = clickInfo.object.userData.betKey;
+      decreaseBetForBox(key, denom);
+    }
   }
   clickInfo.object = null;
+  clickInfo.kind = null;
 }
 
 renderer.domElement.addEventListener('pointerdown', onPointerDown);
