@@ -85,6 +85,7 @@ function createCrapsLayoutTexture() {
     areas[`dontCome${p}`] = { x: baseX, y: canvas.height / 2 - 140, w: 140, h: 80, label: `DC ${p}` };
   });
 
+
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
