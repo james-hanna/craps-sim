@@ -1,11 +1,8 @@
-import { updateBalanceDisplay } from '../state/player';
-import { placeBet } from '../betting/index';
-import { spawnDice } from '../dice/index';
 import { messagePanel, setupMessagePanel } from './message';
 
 let uiPanel;
 
-export function setupUI(playerX, throwZ, scene) {
+export function setupUI(onRollDice, onPlaceBet) {
   // Main UI panel
   uiPanel = document.createElement('div');
   uiPanel.style.position = 'absolute';
@@ -22,7 +19,7 @@ export function setupUI(playerX, throwZ, scene) {
   // Roll Button
   const rollBtn = document.createElement('button');
   rollBtn.textContent = '🎲 Roll Dice';
-  rollBtn.onclick = () => spawnDice(playerX, throwZ, scene);
+  rollBtn.onclick = onRollDice;
   uiPanel.appendChild(rollBtn);
 
   // Chip betting buttons
@@ -34,7 +31,7 @@ export function setupUI(playerX, throwZ, scene) {
   [5, 10, 25, 100].forEach(amount => {
     const chip = document.createElement('button');
     chip.textContent = `$${amount}`;
-    chip.onclick = () => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay);
+    chip.onclick = () => onPlaceBet(amount);
     chipContainer.appendChild(chip);
   });
 
