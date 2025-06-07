@@ -1,6 +1,24 @@
 export const player = {
   balance: 500,
-  currentBet: 0
+  // Pass line bet
+  lineBet: 0,
+  // Don't pass bet
+  dontPass: 0,
+  // Active come bets { amount, point, odds }
+  comeBets: [],
+  // Active don't come bets { amount, point, odds }
+  dontComeBets: [],
+  // One-roll field bet
+  fieldBet: 0,
+  // Hardway bets keyed by number (4,6,8,10)
+  hardways: {
+    4: 0,
+    6: 0,
+    8: 0,
+    10: 0
+  },
+  // Odds on the pass line
+  lineOdds: 0
 };
 
 export const gameState = {
@@ -11,7 +29,12 @@ export const gameState = {
 };
 
 export function updateBalanceDisplay(balanceDisplay) {
-  balanceDisplay.innerText = `Balance: $${player.balance} | Bet: $${player.currentBet}`;
+  const comeTotal = player.comeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
+  const dontComeTotal = player.dontComeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
+  const hardwayTotal = Object.values(player.hardways).reduce((t, v) => t + v, 0);
+  const totalBet =
+    player.lineBet + player.dontPass + comeTotal + dontComeTotal + player.fieldBet + hardwayTotal + player.lineOdds;
+  balanceDisplay.innerText = `Balance: $${player.balance} | Total Bets: $${totalBet}`;
 }
 
 export function displayMessage(messagePanel, text) {
