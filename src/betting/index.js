@@ -1,37 +1,142 @@
 import * as THREE from 'three';
-import { player } from '../state/player';
+import { player, gameState } from '../state/player';
+import { displayMessage } from '../ui/message';
+import { updateBalanceDisplay } from '../ui/balance';
 
 let betChips = [];
+let sceneRef = null;
+let slots = {};
 
-export function placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay) {
-  if (!player.balance || player.balance < amount) return;
-  player.balance -= amount;
-  player.currentBet += amount;
-  updateBalanceDisplay();
-  updateChipDisplay(playerX, throwZ, scene);
+export function initBetting(scene, chipSlots) {
+  sceneRef = scene;
+  slots = chipSlots;
 }
 
-export function updateChipDisplay(playerX, throwZ, scene) {
-  clearChips(scene);
-  const chips = consolidateChips(player.currentBet);
-  const maxChipsPerStack = 20;
-  let stackCount = 0;
-  let chipIndex = 0;
+export function placeBet(amount) {
+  if (!gameState.canBet) {
+    displayMessage('Bets are locked until the round is over.');
+    return;
+  }
 
-  chips.forEach((value) => {
-    if (chipIndex >= maxChipsPerStack) {
-      stackCount++;
-      chipIndex = 0;
+  if (!player.balance || player.balance < amount) return;
+  player.balance -= amount;
+  player.lineBet += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeComeBet(amount) {
+  if (gameState.phase !== 'point') {
+    displayMessage('Come bets only allowed after the point is set.');
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.comeBets.push({ amount, point: null, odds: 0 });
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeDontPass(amount) {
+  if (gameState.phase !== 'comeOut') {
+    displayMessage("Don't Pass only on come out.");
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.dontPass += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeDontCome(amount) {
+  if (gameState.phase !== 'point') {
+    displayMessage("Don't Come only after point is set.");
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.dontComeBets.push({ amount, point: null, odds: 0 });
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeFieldBet(amount) {
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.fieldBet += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeOdds(type, point, amount) {
+  if (player.balance < amount) return;
+  if (type === 'line') {
+    if (gameState.phase !== 'point') {
+      displayMessage('Pass line odds only after a point.');
+      return;
     }
-    const chip = createChipMesh(value, playerX, stackCount, chipIndex, throwZ);
-    scene.add(chip);
-    betChips.push(chip);
-    chipIndex++;
+    player.balance -= amount;
+    player.lineOdds += amount;
+  } else if (type === 'come') {
+    const bet = player.comeBets.find(b => b.point === point);
+    if (!bet) return;
+    player.balance -= amount;
+    bet.odds = (bet.odds || 0) + amount;
+  } else if (type === 'dontCome') {
+    const bet = player.dontComeBets.find(b => b.point === point);
+    if (!bet) return;
+    player.balance -= amount;
+    bet.odds = (bet.odds || 0) + amount;
+  }
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeHardway(number, amount) {
+  if (![4,6,8,10].includes(number)) return;
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.hardways[number] += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function updateAllBetChips() {
+  if (!sceneRef) return;
+  clearChips();
+
+  if (player.lineBet > 0 && slots.passLine) {
+    addChips(player.lineBet, slots.passLine);
+  }
+  if (player.lineOdds > 0 && slots.lineOdds) {
+    addChips(player.lineOdds, slots.lineOdds);
+  }
+  if (player.dontPass > 0 && slots.dontPass) {
+    addChips(player.dontPass, slots.dontPass);
+  }
+  if (player.fieldBet > 0 && slots.field) {
+    addChips(player.fieldBet, slots.field);
+  }
+  player.comeBets.forEach(b => {
+    const total = b.amount + (b.odds || 0);
+    if (total > 0 && slots.come) addChips(total, slots.come);
+  });
+  player.dontComeBets.forEach(b => {
+    const total = b.amount + (b.odds || 0);
+    if (total > 0 && slots.dontCome) addChips(total, slots.dontCome);
+  });
+  Object.entries(player.hardways).forEach(([n, amt]) => {
+    if (amt > 0 && slots[`hard${n}`]) {
+      addChips(amt, slots[`hard${n}`]);
+    }
   });
 }
 
-export function clearChips(scene) {
-  betChips.forEach(c => scene.remove(c));
+export function clearChips() {
+  betChips.forEach(c => {
+    if (c.parent) c.parent.remove(c);
+  });
   betChips = [];
 }
 
@@ -47,7 +152,7 @@ function consolidateChips(totalAmount) {
   return result;
 }
 
-function createChipMesh(amount, x, stackIndex, chipIndex, throwZ) {
+function createChipMesh(amount) {
   const chipHeight = 0.4;
   const geometry = new THREE.CylinderGeometry(0.5, 0.5, chipHeight, 32);
   const colorMap = {
@@ -59,12 +164,16 @@ function createChipMesh(amount, x, stackIndex, chipIndex, throwZ) {
     1000: 0xffff00
   };
   const material = new THREE.MeshStandardMaterial({ color: colorMap[amount] || 0xffffff });
-  const chip = new THREE.Mesh(geometry, material);
-  const spacing = 1.2;
-  chip.position.set(
-    x + stackIndex * spacing,
-    chipHeight / 2 + chipIndex * (chipHeight + 0.01),
-    throwZ - 3
-  );
-  return chip;
+  return new THREE.Mesh(geometry, material);
+}
+
+function addChips(amount, pos) {
+  const chips = consolidateChips(amount);
+  const chipHeight = 0.4;
+  chips.forEach((value, idx) => {
+    const chip = createChipMesh(value);
+    chip.position.set(pos.x, chipHeight / 2 + idx * (chipHeight + 0.01), pos.z);
+    sceneRef.add(chip);
+    betChips.push(chip);
+  });
 }
