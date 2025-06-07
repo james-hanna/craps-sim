@@ -2,44 +2,43 @@
 import * as THREE from 'three';
 import { Vec3 } from 'cannon-es';
 
-import { setupSceneAndRenderer, setupPhysicsWorld, setupTableAndWalls } from './environment/setup.js';
-
+import {
+  setupSceneAndRenderer,
+  setupPhysicsWorld,
+  setupTableAndWalls
+} from './environment/setup.js';
 
 
 import { initControls } from './ui/controls.js';
-import { createDie, getTopFace } from './dice/index.js';
-import { initializeBalanceDisplay, updateBalanceDisplay } from './ui/balance.js';
-import { placeBet, updateChipDisplay, clearChips } from './betting/index.js';
-import { setupUI, messagePanel } from './ui/index.js';
+import { createDie } from './dice/index.js';
+import { updateBalanceDisplay } from './ui/balance.js';
+import { placeBet } from './betting/index.js';
+import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
+import { player, gameState } from './state/player.js';
+import { displayMessage } from './ui/message.js';
 
-const {
-  scene,
-  camera,
-  renderer,
-  throwZ,
-  diceMaterial,
-  world,
-  tableWidth
-} = setupSceneAndRenderer();
-
-setupPhysicsWorld(world);
-setupTableAndWalls(scene, world);
+const { scene, camera, renderer } = setupSceneAndRenderer();
+const world = setupPhysicsWorld();
+const { tableWidth } = setupTableAndWalls(scene, world);
+const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
-initializeBalanceDisplay();
-setupUI(() => spawnDice(), (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay));
+setupUI(spawnDice, (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay));
 
 let playerX = 0;
 let dice = [];
 let waitingForRollToSettle = false;
-let rollDisplayPending = false;
-let rollTimer = 0;
 
 function spawnDice() {
+  if (gameState.phase === 'comeOut' && player.currentBet === 0) {
+    displayMessage('Place a line bet before rolling.');
+    return;
+  }
+
   clearDice();
 
-  const d1 = createDie(new THREE.Vector3(playerX - 0.3, 1.2, throwZ), diceMaterial);
-  const d2 = createDie(new THREE.Vector3(playerX + 0.3, 1.2, throwZ), diceMaterial);
+  const d1 = createDie(new THREE.Vector3(playerX - 0.3, 1.2, throwZ));
+  const d2 = createDie(new THREE.Vector3(playerX + 0.3, 1.2, throwZ));
 
   scene.add(d1.mesh, d2.mesh);
   world.addBody(d1.body);
@@ -59,7 +58,6 @@ function spawnDice() {
   });
 
   waitingForRollToSettle = true;
-  rollDisplayPending = true;
 }
 
 function clearDice() {
@@ -68,10 +66,6 @@ function clearDice() {
     world.removeBody(d.body);
   });
   dice = [];
-}
-
-function displayMessage(text) {
-  messagePanel.textContent = text;
 }
 
 function animate() {
@@ -83,32 +77,8 @@ function animate() {
     die.mesh.quaternion.copy(die.body.quaternion);
   });
 
-  if (waitingForRollToSettle) {
-    checkRoll({
-      dice,
-      waitingForRollToSettle,
-      rollDisplayPending,
-      rollTimer,
-      updateBalanceDisplay,
-      displayMessage,
-      clearDice,
-      clearChips,
-      updateChipDisplay,
-      scene,
-      playerX,
-      throwZ,
-      onRollComplete: () => {
-        waitingForRollToSettle = false;
-        rollDisplayPending = false;
-        rollTimer = 0;
-      },
-      incrementTimer: () => {
-        rollTimer += 1 / 60;
-      },
-      resetTimer: () => {
-        rollTimer = 0;
-      }
-    });
+  if (waitingForRollToSettle && checkRoll(dice)) {
+    waitingForRollToSettle = false;
   }
 
   renderer.render(scene, camera);
