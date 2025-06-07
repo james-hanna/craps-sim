@@ -194,11 +194,15 @@ export function setupTableAndWalls(scene, world) {
   const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
   const mapZ = cY => (cY / size.height - 0.5) * tableWidth;
   const chipSlots = {};
+  const betAreas = {};
   for (const [key, a] of Object.entries(areas)) {
     const cx = a.x + a.w / 2;
     const cy = a.y + a.h / 2;
     chipSlots[key] = { x: mapX(cx), z: mapZ(cy) };
+    const w = (a.w / size.width) * tableLength;
+    const d = (a.h / size.height) * tableWidth;
+    betAreas[key] = { x: mapX(cx), z: mapZ(cy), width: w, depth: d };
   }
 
-  return { tableLength, tableWidth, chipSlots };
+  return { tableLength, tableWidth, chipSlots, betAreas };
 }
