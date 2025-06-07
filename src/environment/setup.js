@@ -82,12 +82,14 @@ function createCrapsLayoutTexture() {
   const startX = (canvas.width - (comeW * 3 + spacingX * 2)) / 2;
   const baseY = 760; // move rows slightly upward
   const rowSpacing = 320; // a bit more vertical spacing
+
   points.forEach((p, i) => {
     const row = Math.floor(i / 3);
     const col = i % 3;
     const x = startX + col * (comeW + spacingX);
     const comeY = baseY + row * rowSpacing;
     const dontY = comeY - dontH - 40; // extra gap from don't come box
+
     areas[`come${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
     areas[`dontCome${p}`] = { x, y: dontY, w: comeW, h: dontH, label: `DC ${p}` };
     areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
@@ -98,11 +100,11 @@ function createCrapsLayoutTexture() {
   const hwSpacing = 60;
   const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
   const hwStartY = 220; // move hardways slightly toward top
+
   areas.hard4 = { x: hwStartX, y: hwStartY, w: hwW, h: hwH, label: 'HARD 4' };
   areas.hard6 = { x: hwStartX + hwW + hwSpacing, y: hwStartY, w: hwW, h: hwH, label: 'HARD 6' };
   areas.hard8 = { x: hwStartX, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 8' };
   areas.hard10 = { x: hwStartX + hwW + hwSpacing, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 10' };
-
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
