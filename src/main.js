@@ -23,7 +23,9 @@ import {
   placeNumberBet
 } from './betting/index.js';
 import { setupUI } from './ui/index.js';
+
 import { getChipMeshes, handleChipClick, updateChipMeshes } from './betting/index.js';
+
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
 import { displayMessage } from './ui/message.js';
@@ -35,6 +37,7 @@ const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
 
 initBetting(scene, chipSlots, world);
+
 setupUI({
   onRollDice: spawnDice,
   onLineBet: (amount) => placeBet(amount),
@@ -47,6 +50,7 @@ setupUI({
   onPlaceBet: (number, amount) => placeNumberBet(number, amount)
 });
 
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 window.addEventListener('pointerdown', (event) => {
@@ -58,6 +62,7 @@ window.addEventListener('pointerdown', (event) => {
     handleChipClick(intersect[0].object);
   }
 });
+
 
 let playerX = 0;
 let dice = [];

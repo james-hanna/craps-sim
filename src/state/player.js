@@ -17,6 +17,7 @@ export const player = {
     8: 0,
     10: 0
   },
+
   // Place bets keyed by number (4,5,6,8,9,10)
   placeBets: {
     4: 0,
@@ -26,6 +27,7 @@ export const player = {
     9: 0,
     10: 0
   },
+
   // Odds on the pass line
   lineOdds: 0
 };

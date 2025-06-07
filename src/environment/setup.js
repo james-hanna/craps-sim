@@ -112,11 +112,12 @@ function createCrapsLayoutTexture() {
     areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
   });
 
-  const hwW = 200;
+  const hwW = 200;n
   const hwH = 200;
   const hwSpacing = 60;
   const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
   const hwStartY = 220; // move hardways slightly toward top
+
   areas.hard4 = { x: hwStartX, y: hwStartY, w: hwW, h: hwH, label: 'HARD 4' };
   areas.hard6 = { x: hwStartX + hwW + hwSpacing, y: hwStartY, w: hwW, h: hwH, label: 'HARD 6' };
   areas.hard8 = { x: hwStartX, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 8' };

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Body, Cylinder, Vec3 } from 'cannon-es';
 import { chipMaterial } from '../environment/setup.js';
+
 import { player, gameState } from '../state/player';
 import { displayMessage } from '../ui/message';
 import { updateBalanceDisplay } from '../ui/balance';
@@ -86,6 +87,7 @@ export function placeNumberBet(number, amount) {
   updateAllBetChips();
 }
 
+
 export function placeOdds(type, point, amount) {
   if (player.balance < amount) return;
   if (type === 'line') {
@@ -134,6 +136,7 @@ export function updateAllBetChips() {
   }
   if (player.fieldBet > 0 && slots.field) {
     addChips(player.fieldBet, slots.field, { kind: 'field' });
+
   }
   player.comeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);
