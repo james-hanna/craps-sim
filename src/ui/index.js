@@ -13,6 +13,7 @@ export function setupUI({
   onOddsLine,
   onHardway
 }) {
+
   // Main UI panel
   uiPanel = document.createElement('div');
   uiPanel.id = 'ui-panel';
@@ -33,6 +34,7 @@ export function setupUI({
 
   [5, 10, 25, 100].forEach(amount => {
     const chip = document.createElement('button');
+
     chip.textContent = `Pass $${amount}`;
     chip.onclick = () => onLineBet(amount);
     chipContainer.appendChild(chip);

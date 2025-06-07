@@ -21,6 +21,7 @@ import {
   placeOdds,
   placeHardway
 } from './betting/index.js';
+
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
@@ -48,6 +49,7 @@ let waitingForRollToSettle = false;
 
 function spawnDice() {
   if (gameState.phase === 'comeOut' && player.lineBet === 0) {
+
     displayMessage('Place a line bet before rolling.');
     return;
   }
