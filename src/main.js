@@ -32,7 +32,7 @@ const { scene, camera, renderer } = setupSceneAndRenderer();
 const world = setupPhysicsWorld();
 const { tableWidth, chipSlots } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
-initControls(camera, renderer);
+const controls = initControls(camera, renderer);
 
 initBetting(scene, chipSlots, world);
 setupUI({
@@ -49,19 +49,38 @@ setupUI({
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+const clickInfo = { x: 0, y: 0, object: null, down: false };
+
 function onPointerDown(event) {
+  if (event.button !== 0) return;
   event.preventDefault();
+  clickInfo.x = event.clientX;
+  clickInfo.y = event.clientY;
+  clickInfo.down = true;
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
   const intersect = raycaster.intersectObjects(getChipMeshes(), true);
-  if (intersect.length) {
-    handleChipClick(intersect[0].object);
+  clickInfo.object = intersect.length ? intersect[0].object : null;
+  if (clickInfo.object) {
+    controls.enabled = false;
   }
 }
 
-renderer.domElement.addEventListener('pointerdown', onPointerDown);
+function onPointerUp(event) {
+  if (!clickInfo.down) return;
+  clickInfo.down = false;
+  controls.enabled = true;
+  const dx = Math.abs(event.clientX - clickInfo.x);
+  const dy = Math.abs(event.clientY - clickInfo.y);
+  if (dx < 4 && dy < 4 && clickInfo.object) {
+    handleChipClick(clickInfo.object);
+  }
+  clickInfo.object = null;
+}
 
+renderer.domElement.addEventListener('pointerdown', onPointerDown);
+renderer.domElement.addEventListener('pointerup', onPointerUp);
 
 let playerX = 0;
 let dice = [];

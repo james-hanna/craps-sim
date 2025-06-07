@@ -115,6 +115,7 @@ export function placeHardway(number, amount) {
   if (player.balance < amount) return;
   player.balance -= amount;
   player.hardways[number] += amount;
+
   updateBalanceDisplay();
   updateAllBetChips();
 }
@@ -122,6 +123,7 @@ export function placeHardway(number, amount) {
 export function updateAllBetChips() {
   if (!sceneRef || !worldRef) return;
   clearChips();
+
   if (player.lineBet > 0 && slots.passLine) {
     addChips(player.lineBet, slots.passLine, { kind: 'passLine' });
   }
