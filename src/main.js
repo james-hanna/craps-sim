@@ -11,7 +11,7 @@ import {
 
 import { initControls } from './ui/controls.js';
 import { createDie } from './dice/index.js';
-import { initializeBalanceDisplay, updateBalanceDisplay } from './ui/balance.js';
+import { updateBalanceDisplay } from './ui/balance.js';
 import { placeBet } from './betting/index.js';
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
@@ -21,7 +21,6 @@ const world = setupPhysicsWorld();
 const { tableWidth } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
-initializeBalanceDisplay();
 setupUI(spawnDice, (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay));
 
 let playerX = 0;

@@ -12,7 +12,7 @@ export function placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay) {
 }
 
 export function updateChipDisplay(playerX, throwZ, scene) {
-  clearChips(scene);
+  clearChips();
   const chips = consolidateChips(player.currentBet);
   const maxChipsPerStack = 20;
   let stackCount = 0;
@@ -30,8 +30,10 @@ export function updateChipDisplay(playerX, throwZ, scene) {
   });
 }
 
-export function clearChips(scene) {
-  betChips.forEach(c => scene.remove(c));
+export function clearChips() {
+  betChips.forEach(c => {
+    if (c.parent) c.parent.remove(c);
+  });
   betChips = [];
 }
 
