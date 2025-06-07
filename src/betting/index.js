@@ -1,19 +1,97 @@
 import * as THREE from 'three';
-import { player } from '../state/player';
+import { player, gameState } from '../state/player';
+import { displayMessage } from '../ui/message';
+import { updateBalanceDisplay } from '../ui/balance';
 
 let betChips = [];
 
-export function placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay) {
+export function placeBet(amount, playerX, throwZ, scene) {
+  if (!gameState.canBet) {
+    displayMessage('Bets are locked until the round is over.');
+    return;
+  }
+
   if (!player.balance || player.balance < amount) return;
   player.balance -= amount;
-  player.currentBet += amount;
+  player.lineBet += amount;
   updateBalanceDisplay();
   updateChipDisplay(playerX, throwZ, scene);
 }
 
+export function placeComeBet(amount) {
+  if (gameState.phase !== 'point') {
+    displayMessage('Come bets only allowed after the point is set.');
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.comeBets.push({ amount, point: null, odds: 0 });
+  updateBalanceDisplay();
+}
+
+export function placeDontPass(amount) {
+  if (gameState.phase !== 'comeOut') {
+    displayMessage("Don't Pass only on come out.");
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.dontPass += amount;
+  updateBalanceDisplay();
+}
+
+export function placeDontCome(amount) {
+  if (gameState.phase !== 'point') {
+    displayMessage("Don't Come only after point is set.");
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.dontComeBets.push({ amount, point: null, odds: 0 });
+  updateBalanceDisplay();
+}
+
+export function placeFieldBet(amount) {
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.fieldBet += amount;
+  updateBalanceDisplay();
+}
+
+export function placeOdds(type, point, amount) {
+  if (player.balance < amount) return;
+  if (type === 'line') {
+    if (gameState.phase !== 'point') {
+      displayMessage('Pass line odds only after a point.');
+      return;
+    }
+    player.balance -= amount;
+    player.lineOdds += amount;
+  } else if (type === 'come') {
+    const bet = player.comeBets.find(b => b.point === point);
+    if (!bet) return;
+    player.balance -= amount;
+    bet.odds = (bet.odds || 0) + amount;
+  } else if (type === 'dontCome') {
+    const bet = player.dontComeBets.find(b => b.point === point);
+    if (!bet) return;
+    player.balance -= amount;
+    bet.odds = (bet.odds || 0) + amount;
+  }
+  updateBalanceDisplay();
+}
+
+export function placeHardway(number, amount) {
+  if (![4,6,8,10].includes(number)) return;
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.hardways[number] += amount;
+  updateBalanceDisplay();
+}
+
 export function updateChipDisplay(playerX, throwZ, scene) {
-  clearChips(scene);
-  const chips = consolidateChips(player.currentBet);
+  clearChips();
+  const chips = consolidateChips(player.lineBet);
   const maxChipsPerStack = 20;
   let stackCount = 0;
   let chipIndex = 0;
@@ -30,8 +108,10 @@ export function updateChipDisplay(playerX, throwZ, scene) {
   });
 }
 
-export function clearChips(scene) {
-  betChips.forEach(c => scene.remove(c));
+export function clearChips() {
+  betChips.forEach(c => {
+    if (c.parent) c.parent.remove(c);
+  });
   betChips = [];
 }
 

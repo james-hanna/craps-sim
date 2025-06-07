@@ -52,13 +52,39 @@ export function setupPhysicsWorld() {
   return world;
 }
 
+function createCrapsLayoutTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 2048;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#0b6623';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+  ctx.font = '60px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('PASS LINE', canvas.width / 2, canvas.height - 60);
+  ctx.fillText('PASS LINE', canvas.width / 2, 80);
+
+  return new THREE.CanvasTexture(canvas);
+}
+
 
 export function setupTableAndWalls(scene, world) {
   const tableLength = 36;
   const tableWidth = 85;
   const tableHeight = 1;
 
-  const tableMat = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+  const layoutTex = createCrapsLayoutTexture();
+  layoutTex.wrapS = THREE.RepeatWrapping;
+  layoutTex.wrapT = THREE.RepeatWrapping;
+  layoutTex.repeat.set(1, 1);
+  const tableMat = new THREE.MeshStandardMaterial({ map: layoutTex });
   const tableGeo = new THREE.BoxGeometry(tableLength, tableHeight, tableWidth);
   const tableMesh = new THREE.Mesh(tableGeo, tableMat);
   tableMesh.position.set(0, -0.5, 0);
