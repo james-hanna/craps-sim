@@ -12,6 +12,7 @@ import {
 import { initControls } from './ui/controls.js';
 import { createDie } from './dice/index.js';
 import {
+  initBetting,
   placeBet,
   placeComeBet,
   placeDontPass,
@@ -20,7 +21,6 @@ import {
   placeOdds,
   placeHardway
 } from './betting/index.js';
-
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
@@ -28,13 +28,13 @@ import { displayMessage } from './ui/message.js';
 
 const { scene, camera, renderer } = setupSceneAndRenderer();
 const world = setupPhysicsWorld();
-const { tableWidth } = setupTableAndWalls(scene, world);
+const { tableWidth, chipSlots } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
+initBetting(scene, chipSlots);
 setupUI({
   onRollDice: spawnDice,
-
-  onLineBet: (amount) => placeBet(amount, playerX, throwZ, scene),
+  onLineBet: (amount) => placeBet(amount),
   onComeBet: (amount) => placeComeBet(amount),
   onDontPass: (amount) => placeDontPass(amount),
   onDontCome: (amount) => placeDontCome(amount),

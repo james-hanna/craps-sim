@@ -65,13 +65,33 @@ function createCrapsLayoutTexture() {
   ctx.lineWidth = 4;
   ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
-  ctx.font = '60px Arial';
+  const areas = {
+    passLine: { x: 50, y: canvas.height - 180, w: canvas.width - 100, h: 120, label: 'PASS LINE' },
+    dontPass: { x: 50, y: canvas.height - 260, w: canvas.width - 100, h: 60, label: "DON'T PASS" },
+    come: { x: 50, y: canvas.height - 520, w: canvas.width - 100, h: 120, label: 'COME' },
+    dontCome: { x: 50, y: canvas.height - 600, w: canvas.width - 100, h: 60, label: "DON'T COME" },
+    field: { x: 50, y: canvas.height - 380, w: canvas.width - 100, h: 80, label: 'FIELD' },
+    hard4: { x: 150, y: 200, w: 140, h: 80, label: 'HARD 4' },
+    hard6: { x: 320, y: 200, w: 140, h: 80, label: 'HARD 6' },
+    hard8: { x: 490, y: 200, w: 140, h: 80, label: 'HARD 8' },
+    hard10: { x: 660, y: 200, w: 140, h: 80, label: 'HARD 10' }
+  };
+
+  ctx.font = '48px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
-  ctx.fillText('PASS LINE', canvas.width / 2, canvas.height - 60);
-  ctx.fillText('PASS LINE', canvas.width / 2, 80);
 
-  return new THREE.CanvasTexture(canvas);
+  for (const key in areas) {
+    const a = areas[key];
+    ctx.strokeRect(a.x, a.y, a.w, a.h);
+    ctx.fillText(a.label, a.x + a.w / 2, a.y + a.h / 2 + 16);
+  }
+
+  return {
+    texture: new THREE.CanvasTexture(canvas),
+    areas,
+    size: { width: canvas.width, height: canvas.height }
+  };
 }
 
 
@@ -79,8 +99,8 @@ export function setupTableAndWalls(scene, world) {
   const tableLength = 36;
   const tableWidth = 85;
   const tableHeight = 1;
-
-  const layoutTex = createCrapsLayoutTexture();
+  
+  const { texture: layoutTex, areas, size } = createCrapsLayoutTexture();
   layoutTex.wrapS = THREE.RepeatWrapping;
   layoutTex.wrapT = THREE.RepeatWrapping;
   layoutTex.repeat.set(1, 1);
@@ -126,5 +146,14 @@ export function setupTableAndWalls(scene, world) {
     world.addBody(wallBody);
   }
 
-  return { tableLength, tableWidth };
+  const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
+  const mapZ = cY => (0.5 - cY / size.height) * tableWidth;
+  const chipSlots = {};
+  for (const [key, a] of Object.entries(areas)) {
+    const cx = a.x + a.w / 2;
+    const cy = a.y + a.h / 2;
+    chipSlots[key] = { x: mapX(cx), z: mapZ(cy) };
+  }
+
+  return { tableLength, tableWidth, chipSlots };
 }

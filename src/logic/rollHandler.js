@@ -3,7 +3,7 @@ import { getTopFace } from '../dice/index';
 import { player, gameState } from '../state/player';
 import { updateBalanceDisplay } from '../ui/balance';
 import { displayMessage } from '../ui/message';
-import { clearChips } from '../betting';
+import { clearChips, updateAllBetChips } from '../betting';
 
 let rollTimer = 0;
 
@@ -140,12 +140,15 @@ function resolveBets(r1, r2, total) {
         }
         gameState.canBet = true;
         clearChips();
+        updateAllBetChips();
+
       } else if ([2, 3, 12].includes(total)) {
         if (player.lineBet > 0) {
           messages.push('Pass line loses.');
           player.lineBet = 0;
           player.lineOdds = 0;
           clearChips();
+          updateAllBetChips();
         }
         if (total === 12 && player.dontPass > 0) {
           player.balance += player.dontPass; // push
@@ -182,6 +185,7 @@ function resolveBets(r1, r2, total) {
       gameState.point = null;
       gameState.canBet = true;
       clearChips();
+      updateAllBetChips();
     } else if (total === 7) {
       if (player.lineBet > 0) messages.push('Pass line loses.');
       if (player.dontPass > 0) {
@@ -195,6 +199,7 @@ function resolveBets(r1, r2, total) {
       gameState.point = null;
       gameState.canBet = true;
       clearChips();
+      updateAllBetChips();
     }
   }
 
@@ -220,6 +225,7 @@ export function checkRoll(dice) {
 
       displayMessage(message);
       updateBalanceDisplay();
+      updateAllBetChips();
       return true; // roll resolved
     }
   } else {
