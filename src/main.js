@@ -22,7 +22,7 @@ const { tableWidth } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
 initializeBalanceDisplay();
-setupUI(() => spawnDice(), (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay));
+setupUI(spawnDice, (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay));
 
 let playerX = 0;
 let dice = [];
