@@ -24,12 +24,20 @@ button:hover {
 
 /* UI Panel Styles */
 #ui-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   background: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+#balance-display {
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
 /* Message Styling */
@@ -43,4 +51,13 @@ button:hover {
 #chip-container {
   display: flex;
   gap: 10px;
+}
+
+.active {
+  background-color: #777;
+}
+
+#hard-container {
+  display: flex;
+  gap: 6px;
 }
