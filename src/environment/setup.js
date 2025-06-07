@@ -55,6 +55,7 @@ export function setupPhysicsWorld() {
 function createCrapsLayoutTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 1500;
+
   canvas.height = 2048;
   const ctx = canvas.getContext('2d');
 
@@ -165,6 +166,7 @@ export function setupTableAndWalls(scene, world) {
 
   const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
   const mapZ = cY => (cY / size.height - 0.5) * tableWidth;
+
   const chipSlots = {};
   for (const [key, a] of Object.entries(areas)) {
     const cx = a.x + a.w / 2;
