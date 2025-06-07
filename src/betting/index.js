@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { Body, Cylinder, Vec3 } from 'cannon-es';
 import { chipMaterial } from '../environment/setup.js';
-
 import { player, gameState } from '../state/player';
 import { displayMessage } from '../ui/message';
 import { updateBalanceDisplay } from '../ui/balance';
@@ -26,7 +25,6 @@ export function placeBet(amount) {
   if (!player.balance || player.balance < amount) return;
   player.balance -= amount;
   player.lineBet += amount;
-
   updateBalanceDisplay();
   updateAllBetChips();
 }
@@ -124,7 +122,6 @@ export function placeHardway(number, amount) {
 export function updateAllBetChips() {
   if (!sceneRef || !worldRef) return;
   clearChips();
-
   if (player.lineBet > 0 && slots.passLine) {
     addChips(player.lineBet, slots.passLine, { kind: 'passLine' });
   }
@@ -180,8 +177,10 @@ function consolidateChips(totalAmount) {
 }
 
 function createChipMesh(amount) {
-  const chipHeight = 0.4;
-  const geometry = new THREE.CylinderGeometry(0.5, 0.5, chipHeight, 32);
+  const chipHeight = 0.3;
+  const radius = 0.65;
+  const geometry = new THREE.CylinderGeometry(radius, radius, chipHeight, 32);
+
   const colorMap = {
     1: 0xffffff,
     5: 0xff0000,
@@ -199,11 +198,12 @@ function createChipMesh(amount) {
 function addChips(amount, pos, info) {
   if (!worldRef) return;
   const chips = consolidateChips(amount);
-  const chipHeight = 0.4;
+  const chipHeight = 0.3;
+  const radius = 0.65;
   chips.forEach((value, idx) => {
     const mesh = createChipMesh(value);
     mesh.position.set(pos.x, chipHeight / 2 + idx * (chipHeight + 0.01), pos.z);
-    const shape = new Cylinder(0.5, 0.5, chipHeight, 16);
+    const shape = new Cylinder(radius, radius, chipHeight, 16);
     const body = new Body({
       mass: 0.1,
       material: chipMaterial,
