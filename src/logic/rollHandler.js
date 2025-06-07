@@ -1,6 +1,7 @@
 // src/logic/rollHandler.js
 import { getTopFace } from '../dice/index';
-import { player, gameState, updateBalanceDisplay } from '../state/player';
+import { player, gameState } from '../state/player';
+import { updateBalanceDisplay } from '../ui/balance';
 import { displayMessage } from '../ui/message';
 import { clearChips } from '../betting';
 
