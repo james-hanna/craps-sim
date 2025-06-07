@@ -52,3 +52,8 @@ button:hover {
   display: flex;
   gap: 10px;
 }
+
+#hard-container {
+  display: flex;
+  gap: 6px;
+}

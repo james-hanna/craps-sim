@@ -12,7 +12,16 @@ import {
 import { initControls } from './ui/controls.js';
 import { createDie } from './dice/index.js';
 import { updateBalanceDisplay } from './ui/balance.js';
-import { placeBet } from './betting/index.js';
+import {
+  placeBet,
+  placeComeBet,
+  placeDontPass,
+  placeDontCome,
+  placeFieldBet,
+  placeOdds,
+  placeHardway
+} from './betting/index.js';
+
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
@@ -23,14 +32,24 @@ const world = setupPhysicsWorld();
 const { tableWidth } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
-setupUI(spawnDice, (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay));
+setupUI({
+  onRollDice: spawnDice,
+  onLineBet: (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay),
+  onComeBet: (amount) => placeComeBet(amount),
+  onDontPass: (amount) => placeDontPass(amount),
+  onDontCome: (amount) => placeDontCome(amount),
+  onFieldBet: (amount) => placeFieldBet(amount),
+  onOddsLine: (amount) => placeOdds('line', null, amount),
+  onHardway: (number, amount) => placeHardway(number, amount)
+});
 
 let playerX = 0;
 let dice = [];
 let waitingForRollToSettle = false;
 
 function spawnDice() {
-  if (gameState.phase === 'comeOut' && player.currentBet === 0) {
+  if (gameState.phase === 'comeOut' && player.lineBet === 0) {
+
     displayMessage('Place a line bet before rolling.');
     return;
   }

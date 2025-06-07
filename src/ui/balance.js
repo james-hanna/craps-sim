@@ -12,6 +12,11 @@ export function initializeBalanceDisplay(parent = document.body) {
 
 export function updateBalanceDisplay() {
   if (balanceDisplay) {
-    balanceDisplay.innerText = `Balance: $${player.balance} | Bet: $${player.currentBet}`;
+    const comeTotal = player.comeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
+    const dontComeTotal = player.dontComeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
+    const hardwayTotal = Object.values(player.hardways).reduce((t, v) => t + v, 0);
+    const totalBet =
+      player.lineBet + player.dontPass + comeTotal + dontComeTotal + player.fieldBet + hardwayTotal + player.lineOdds;
+    balanceDisplay.innerText = `Balance: $${player.balance} | Total Bets: $${totalBet}`;
   }
 }
