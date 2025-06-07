@@ -26,6 +26,7 @@ export function placeBet(amount) {
   if (!player.balance || player.balance < amount) return;
   player.balance -= amount;
   player.lineBet += amount;
+
   updateBalanceDisplay();
   updateAllBetChips();
 }
@@ -121,6 +122,96 @@ export function placeHardway(number, amount) {
   updateAllBetChips();
 }
 
+export function placeComeBet(amount) {
+  if (gameState.phase !== 'point') {
+    displayMessage('Come bets only allowed after the point is set.');
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.comeBets.push({ amount, point: null, odds: 0 });
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeDontPass(amount) {
+  if (gameState.phase !== 'comeOut') {
+    displayMessage("Don't Pass only on come out.");
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.dontPass += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeDontCome(amount) {
+  if (gameState.phase !== 'point') {
+    displayMessage("Don't Come only after point is set.");
+    return;
+  }
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.dontComeBets.push({ amount, point: null, odds: 0 });
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeFieldBet(amount) {
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.fieldBet += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeNumberBet(number, amount) {
+  if (!gameState.point) {
+    displayMessage('Place bets only after the point is set.');
+    return;
+  }
+  if (![4,5,6,8,9,10].includes(number)) return;
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.placeBets[number] += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeOdds(type, point, amount) {
+  if (player.balance < amount) return;
+  if (type === 'line') {
+    if (gameState.phase !== 'point') {
+      displayMessage('Pass line odds only after a point.');
+      return;
+    }
+    player.balance -= amount;
+    player.lineOdds += amount;
+  } else if (type === 'come') {
+    const bet = player.comeBets.find(b => b.point === point);
+    if (!bet) return;
+    player.balance -= amount;
+    bet.odds = (bet.odds || 0) + amount;
+  } else if (type === 'dontCome') {
+    const bet = player.dontComeBets.find(b => b.point === point);
+    if (!bet) return;
+    player.balance -= amount;
+    bet.odds = (bet.odds || 0) + amount;
+  }
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
+export function placeHardway(number, amount) {
+  if (![4,6,8,10].includes(number)) return;
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.hardways[number] += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
 export function updateAllBetChips() {
   if (!sceneRef || !worldRef) return;
   clearChips();
@@ -136,7 +227,6 @@ export function updateAllBetChips() {
   }
   if (player.fieldBet > 0 && slots.field) {
     addChips(player.fieldBet, slots.field, { kind: 'field' });
-
   }
   player.comeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);

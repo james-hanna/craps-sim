@@ -17,6 +17,7 @@ export function updateBalanceDisplay() {
   const dontComeTotal = player.dontComeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
   const hardwayTotal = Object.values(player.hardways).reduce((t, v) => t + v, 0);
   const placeTotal = Object.values(player.placeBets).reduce((t, v) => t + v, 0);
+
   const parts = [
     `Pass Line: $${player.lineBet}`,
     player.lineOdds ? `Odds: $${player.lineOdds}` : null,

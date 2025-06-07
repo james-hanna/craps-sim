@@ -74,16 +74,18 @@ function resolveBets(r1, r2, total) {
   }
 
   // Place bets
-  const placeNumbers = [4, 5, 6, 8, 9, 10];
-  for (const n of placeNumbers) {
-    const amt = player.placeBets[n];
-    if (!amt) continue;
-    if (total === n) {
-      player.balance += payoutPlace(n, amt);
-      messages.push(`Place ${n} pays!`);
-    } else if (total === 7) {
-      player.placeBets[n] = 0;
-      messages.push(`Place ${n} loses.`);
+  if (gameState.phase === 'point') {
+    const placeNumbers = [4, 5, 6, 8, 9, 10];
+    for (const n of placeNumbers) {
+      const amt = player.placeBets[n];
+      if (!amt) continue;
+      if (total === n) {
+        player.balance += payoutPlace(n, amt);
+        messages.push(`Place ${n} pays!`);
+      } else if (total === 7) {
+        player.placeBets[n] = 0;
+        messages.push(`Place ${n} loses.`);
+      }
     }
   }
 

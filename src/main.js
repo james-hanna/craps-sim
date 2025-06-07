@@ -23,7 +23,6 @@ import {
   placeNumberBet
 } from './betting/index.js';
 import { setupUI } from './ui/index.js';
-
 import { getChipMeshes, handleChipClick, updateChipMeshes } from './betting/index.js';
 
 import { checkRoll } from './logic/rollHandler.js';
@@ -37,7 +36,6 @@ const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
 
 initBetting(scene, chipSlots, world);
-
 setupUI({
   onRollDice: spawnDice,
   onLineBet: (amount) => placeBet(amount),
@@ -57,7 +55,8 @@ window.addEventListener('pointerdown', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
-  const intersect = raycaster.intersectObjects(getChipMeshes());
+  const intersect = raycaster.intersectObjects(getChipMeshes(), true);
+
   if (intersect.length) {
     handleChipClick(intersect[0].object);
   }
