@@ -23,6 +23,22 @@ function payoutOdds(point, amount) {
   }
 }
 
+function payoutPlace(point, amount) {
+  switch (point) {
+    case 4:
+    case 10:
+      return Math.round(amount * 9 / 5);
+    case 5:
+    case 9:
+      return Math.round(amount * 7 / 5);
+    case 6:
+    case 8:
+      return Math.round(amount * 7 / 6);
+    default:
+      return 0;
+  }
+}
+
 function resolveBets(r1, r2, total) {
   let messages = [];
 
@@ -54,6 +70,20 @@ function resolveBets(r1, r2, total) {
     } else if (total === 7 || total === n) {
       player.hardways[n] = 0;
       messages.push(`Hard ${n} loses.`);
+    }
+  }
+
+  // Place bets
+  const placeNumbers = [4, 5, 6, 8, 9, 10];
+  for (const n of placeNumbers) {
+    const amt = player.placeBets[n];
+    if (!amt) continue;
+    if (total === n) {
+      player.balance += payoutPlace(n, amt);
+      messages.push(`Place ${n} pays!`);
+    } else if (total === 7) {
+      player.placeBets[n] = 0;
+      messages.push(`Place ${n} loses.`);
     }
   }
 

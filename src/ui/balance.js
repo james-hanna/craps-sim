@@ -16,13 +16,18 @@ export function updateBalanceDisplay() {
   const comeTotal = player.comeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
   const dontComeTotal = player.dontComeBets.reduce((t, b) => t + b.amount + (b.odds || 0), 0);
   const hardwayTotal = Object.values(player.hardways).reduce((t, v) => t + v, 0);
+  const placeTotal = Object.values(player.placeBets).reduce((t, v) => t + v, 0);
+
 
   const parts = [
     `Pass Line: $${player.lineBet}`,
     player.lineOdds ? `Odds: $${player.lineOdds}` : null,
     player.dontPass ? `Don't Pass: $${player.dontPass}` : null,
     player.fieldBet ? `Field: $${player.fieldBet}` : null,
-    comeTotal ? `Come/Place: $${comeTotal}` : null,
+
+    comeTotal ? `Come: $${comeTotal}` : null,
+    placeTotal ? `Place: $${placeTotal}` : null,
+
     dontComeTotal ? `Don't Come: $${dontComeTotal}` : null,
     hardwayTotal ? `Hardways: $${hardwayTotal}` : null
   ].filter(Boolean);

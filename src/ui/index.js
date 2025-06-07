@@ -11,7 +11,9 @@ export function setupUI({
   onDontCome,
   onFieldBet,
   onOddsLine,
-  onHardway
+  onHardway,
+  onPlaceBet
+
 }) {
   // Main UI panel
   uiPanel = document.createElement('div');
@@ -56,6 +58,17 @@ export function setupUI({
   makeBtn("Don't Come", onDontCome);
   makeBtn('Field', onFieldBet);
   makeBtn('Pass Odds', amt => onOddsLine(amt));
+
+
+  const placeContainer = document.createElement('div');
+  placeContainer.id = 'place-container';
+  uiPanel.appendChild(placeContainer);
+  [4,5,6,8,9,10].forEach(n => {
+    const btn = document.createElement('button');
+    btn.textContent = `Place ${n}`;
+    btn.onclick = () => onPlaceBet(n, selected);
+    placeContainer.appendChild(btn);
+  });
 
   // Hardway buttons
   const hardContainer = document.createElement('div');

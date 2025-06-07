@@ -69,6 +69,19 @@ export function placeFieldBet(amount) {
   updateAllBetChips();
 }
 
+export function placeNumberBet(number, amount) {
+  if (!gameState.point) {
+    displayMessage('Place bets only after the point is set.');
+    return;
+  }
+  if (![4,5,6,8,9,10].includes(number)) return;
+  if (player.balance < amount) return;
+  player.balance -= amount;
+  player.placeBets[number] += amount;
+  updateBalanceDisplay();
+  updateAllBetChips();
+}
+
 export function placeOdds(type, point, amount) {
   if (player.balance < amount) return;
   if (type === 'line') {
@@ -123,6 +136,13 @@ export function updateAllBetChips() {
     const key = b.point ? `come${b.point}` : 'come';
     if (total > 0 && slots[key]) addChips(total, slots[key]);
   });
+
+  Object.entries(player.placeBets).forEach(([n, amt]) => {
+    if (amt > 0 && slots[`place${n}`]) {
+      addChips(amt, slots[`place${n}`]);
+    }
+  });
+
   player.dontComeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);
     const key = b.point ? `dontCome${b.point}` : 'dontCome';

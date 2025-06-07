@@ -55,7 +55,6 @@ export function setupPhysicsWorld() {
 function createCrapsLayoutTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 1500;
-
   canvas.height = 2048;
   const ctx = canvas.getContext('2d');
 
@@ -72,29 +71,37 @@ function createCrapsLayoutTexture() {
     dontPass: { x: 50, y: canvas.height - 320, w: canvas.width - 100, h: 70, label: "DON'T PASS" },
     field: { x: 50, y: canvas.height - 460, w: canvas.width - 100, h: 100, label: 'FIELD' },
     come: { x: 50, y: canvas.height - 680, w: canvas.width - 100, h: 190, label: 'COME' },
-    dontCome: { x: 50, y: canvas.height - 760, w: canvas.width - 100, h: 80, label: "DON'T COME" },
-    hard4: { x: 200, y: 460, w: 200, h: 200, label: 'HARD 4' },
-    hard6: { x: 450, y: 460, w: 200, h: 200, label: 'HARD 6' },
-    hard8: { x: 200, y: 680, w: 200, h: 200, label: 'HARD 8' },
-    hard10: { x: 450, y: 680, w: 200, h: 200, label: 'HARD 10' }
+    dontCome: { x: 50, y: canvas.height - 760, w: canvas.width - 100, h: 80, label: "DON'T COME" }
   };
 
   const points = [4, 5, 6, 8, 9, 10];
   const comeW = 350;
   const comeH = 200;
   const dontH = 80;
-  const startX = 100;
   const spacingX = 50;
+  const startX = (canvas.width - (comeW * 3 + spacingX * 2)) / 2;
+  const baseY = 820;
+  const rowSpacing = 280;
   points.forEach((p, i) => {
     const row = Math.floor(i / 3);
     const col = i % 3;
     const x = startX + col * (comeW + spacingX);
-    const comeY = canvas.height / 2 - (row === 0 ? comeH + 60 : -60);
+    const comeY = baseY + row * rowSpacing;
     const dontY = comeY - dontH - 20;
     areas[`come${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
     areas[`dontCome${p}`] = { x, y: dontY, w: comeW, h: dontH, label: `DC ${p}` };
+    areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
   });
 
+  const hwW = 200;
+  const hwH = 200;
+  const hwSpacing = 60;
+  const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
+  const hwStartY = 300;
+  areas.hard4 = { x: hwStartX, y: hwStartY, w: hwW, h: hwH, label: 'HARD 4' };
+  areas.hard6 = { x: hwStartX + hwW + hwSpacing, y: hwStartY, w: hwW, h: hwH, label: 'HARD 6' };
+  areas.hard8 = { x: hwStartX, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 8' };
+  areas.hard10 = { x: hwStartX + hwW + hwSpacing, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 10' };
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
@@ -166,7 +173,6 @@ export function setupTableAndWalls(scene, world) {
 
   const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
   const mapZ = cY => (cY / size.height - 0.5) * tableWidth;
-
   const chipSlots = {};
   for (const [key, a] of Object.entries(areas)) {
     const cx = a.x + a.w / 2;

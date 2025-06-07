@@ -19,7 +19,9 @@ import {
   placeDontCome,
   placeFieldBet,
   placeOdds,
-  placeHardway
+  placeHardway,
+  placeNumberBet
+
 } from './betting/index.js';
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
@@ -40,7 +42,8 @@ setupUI({
   onDontCome: (amount) => placeDontCome(amount),
   onFieldBet: (amount) => placeFieldBet(amount),
   onOddsLine: (amount) => placeOdds('line', null, amount),
-  onHardway: (number, amount) => placeHardway(number, amount)
+  onHardway: (number, amount) => placeHardway(number, amount),
+  onPlaceBet: (number, amount) => placeNumberBet(number, amount)
 });
 
 let playerX = 0;
