@@ -99,7 +99,7 @@ export function setupTableAndWalls(scene, world) {
   const tableLength = 36;
   const tableWidth = 85;
   const tableHeight = 1;
-
+  
   const { texture: layoutTex, areas, size } = createCrapsLayoutTexture();
   layoutTex.wrapS = THREE.RepeatWrapping;
   layoutTex.wrapT = THREE.RepeatWrapping;
