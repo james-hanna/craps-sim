@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { player, gameState } from '../state/player';
 import { displayMessage } from '../ui/message';
+import { updateBalanceDisplay } from '../ui/balance';
 
 let betChips = [];
 
-export function placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay) {
+export function placeBet(amount, playerX, throwZ, scene) {
   if (!gameState.canBet) {
     displayMessage('Bets are locked until the round is over.');
     return;

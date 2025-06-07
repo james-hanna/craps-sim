@@ -11,7 +11,6 @@ import {
 
 import { initControls } from './ui/controls.js';
 import { createDie } from './dice/index.js';
-import { updateBalanceDisplay } from './ui/balance.js';
 import {
   placeBet,
   placeComeBet,
@@ -34,7 +33,8 @@ const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
 setupUI({
   onRollDice: spawnDice,
-  onLineBet: (amount) => placeBet(amount, playerX, throwZ, scene, updateBalanceDisplay),
+
+  onLineBet: (amount) => placeBet(amount, playerX, throwZ, scene),
   onComeBet: (amount) => placeComeBet(amount),
   onDontPass: (amount) => placeDontPass(amount),
   onDontCome: (amount) => placeDontCome(amount),
@@ -49,7 +49,6 @@ let waitingForRollToSettle = false;
 
 function spawnDice() {
   if (gameState.phase === 'comeOut' && player.lineBet === 0) {
-
     displayMessage('Place a line bet before rolling.');
     return;
   }
