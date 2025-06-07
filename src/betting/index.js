@@ -65,16 +65,7 @@ export function placeFieldBet(amount) {
   if (player.balance < amount) return;
   player.balance -= amount;
   player.fieldBet += amount;
-=======
-export function placeBet(amount, playerX, throwZ, scene) {
-  if (!gameState.canBet) {
-    displayMessage('Bets are locked until the round is over.');
-    return;
-  }
-
-  if (!player.balance || player.balance < amount) return;
-  player.balance -= amount;
-  player.lineBet += amount;
+}
 
 export function placeOdds(type, point, amount) {
   if (player.balance < amount) return;
