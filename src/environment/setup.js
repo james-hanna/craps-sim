@@ -66,24 +66,23 @@ function createCrapsLayoutTexture() {
   ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
   const areas = {
-    passLine: { x: 50, y: canvas.height - 180, w: canvas.width - 100, h: 120, label: 'PASS LINE' },
-    lineOdds: { x: 50, y: canvas.height - 220, w: canvas.width - 100, h: 30, label: 'ODDS' },
-    dontPass: { x: 50, y: canvas.height - 260, w: canvas.width - 100, h: 60, label: "DON'T PASS" },
-    field: { x: 50, y: canvas.height - 380, w: canvas.width - 100, h: 80, label: 'FIELD' },
-    come: { x: 50, y: canvas.height - 520, w: canvas.width - 100, h: 120, label: 'COME' },
-    dontCome: { x: 50, y: canvas.height - 600, w: canvas.width - 100, h: 60, label: "DON'T COME" },
-
-    hard4: { x: 150, y: 200, w: 140, h: 80, label: 'HARD 4' },
-    hard6: { x: 320, y: 200, w: 140, h: 80, label: 'HARD 6' },
-    hard8: { x: 490, y: 200, w: 140, h: 80, label: 'HARD 8' },
-    hard10: { x: 660, y: 200, w: 140, h: 80, label: 'HARD 10' }
+    passLine: { x: 50, y: canvas.height - 200, w: canvas.width - 100, h: 150, label: 'PASS LINE' },
+    lineOdds: { x: 70, y: canvas.height - 240, w: canvas.width - 140, h: 40, label: 'ODDS' },
+    dontPass: { x: 50, y: canvas.height - 320, w: canvas.width - 100, h: 70, label: "DON'T PASS" },
+    field: { x: 50, y: canvas.height - 460, w: canvas.width - 100, h: 100, label: 'FIELD' },
+    come: { x: 50, y: canvas.height - 630, w: canvas.width - 100, h: 140, label: 'COME' },
+    dontCome: { x: 50, y: canvas.height - 710, w: canvas.width - 100, h: 80, label: "DON'T COME" },
+    hard4: { x: 220, y: 460, w: 140, h: 80, label: 'HARD 4' },
+    hard6: { x: 390, y: 460, w: 140, h: 80, label: 'HARD 6' },
+    hard8: { x: 560, y: 460, w: 140, h: 80, label: 'HARD 8' },
+    hard10: { x: 730, y: 460, w: 140, h: 80, label: 'HARD 10' }
   };
 
   const points = [4, 5, 6, 8, 9, 10];
   points.forEach((p, i) => {
-    const baseX = 60 + i * 140;
-    areas[`come${p}`] = { x: baseX, y: canvas.height / 2 - 40, w: 120, h: 60, label: `${p}` };
-    areas[`dontCome${p}`] = { x: baseX, y: canvas.height / 2 - 110, w: 120, h: 60, label: `DC ${p}` };
+    const baseX = 70 + i * 150;
+    areas[`come${p}`] = { x: baseX, y: canvas.height / 2 - 50, w: 140, h: 80, label: `${p}` };
+    areas[`dontCome${p}`] = { x: baseX, y: canvas.height / 2 - 140, w: 140, h: 80, label: `DC ${p}` };
   });
 
 
@@ -157,8 +156,7 @@ export function setupTableAndWalls(scene, world) {
   }
 
   const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
-  const mapZ = cY => (cY / size.height - 0.5) * tableWidth;
-
+  const mapZ = cY => (0.5 - cY / size.height) * tableWidth;
   const chipSlots = {};
   for (const [key, a] of Object.entries(areas)) {
     const cx = a.x + a.w / 2;
