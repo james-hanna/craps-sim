@@ -112,7 +112,7 @@ function createCrapsLayoutTexture() {
     areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
   });
 
-  const hwW = 200;n
+  const hwW = 200;
   const hwH = 200;
   const hwSpacing = 60;
   const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
