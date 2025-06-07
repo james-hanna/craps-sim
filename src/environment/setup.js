@@ -54,7 +54,8 @@ export function setupPhysicsWorld() {
 
 function createCrapsLayoutTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
+  canvas.width = 1500;
+
   canvas.height = 2048;
   const ctx = canvas.getContext('2d');
 
@@ -70,21 +71,29 @@ function createCrapsLayoutTexture() {
     lineOdds: { x: 70, y: canvas.height - 240, w: canvas.width - 140, h: 40, label: 'ODDS' },
     dontPass: { x: 50, y: canvas.height - 320, w: canvas.width - 100, h: 70, label: "DON'T PASS" },
     field: { x: 50, y: canvas.height - 460, w: canvas.width - 100, h: 100, label: 'FIELD' },
-    come: { x: 50, y: canvas.height - 630, w: canvas.width - 100, h: 140, label: 'COME' },
-    dontCome: { x: 50, y: canvas.height - 710, w: canvas.width - 100, h: 80, label: "DON'T COME" },
-    hard4: { x: 220, y: 460, w: 140, h: 80, label: 'HARD 4' },
-    hard6: { x: 390, y: 460, w: 140, h: 80, label: 'HARD 6' },
-    hard8: { x: 560, y: 460, w: 140, h: 80, label: 'HARD 8' },
-    hard10: { x: 730, y: 460, w: 140, h: 80, label: 'HARD 10' }
+    come: { x: 50, y: canvas.height - 680, w: canvas.width - 100, h: 190, label: 'COME' },
+    dontCome: { x: 50, y: canvas.height - 760, w: canvas.width - 100, h: 80, label: "DON'T COME" },
+    hard4: { x: 200, y: 460, w: 200, h: 200, label: 'HARD 4' },
+    hard6: { x: 450, y: 460, w: 200, h: 200, label: 'HARD 6' },
+    hard8: { x: 200, y: 680, w: 200, h: 200, label: 'HARD 8' },
+    hard10: { x: 450, y: 680, w: 200, h: 200, label: 'HARD 10' }
   };
 
   const points = [4, 5, 6, 8, 9, 10];
+  const comeW = 350;
+  const comeH = 200;
+  const dontH = 80;
+  const startX = 100;
+  const spacingX = 50;
   points.forEach((p, i) => {
-    const baseX = 70 + i * 150;
-    areas[`come${p}`] = { x: baseX, y: canvas.height / 2 - 50, w: 140, h: 80, label: `${p}` };
-    areas[`dontCome${p}`] = { x: baseX, y: canvas.height / 2 - 140, w: 140, h: 80, label: `DC ${p}` };
+    const row = Math.floor(i / 3);
+    const col = i % 3;
+    const x = startX + col * (comeW + spacingX);
+    const comeY = canvas.height / 2 - (row === 0 ? comeH + 60 : -60);
+    const dontY = comeY - dontH - 20;
+    areas[`come${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
+    areas[`dontCome${p}`] = { x, y: dontY, w: comeW, h: dontH, label: `DC ${p}` };
   });
-
 
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
@@ -156,7 +165,8 @@ export function setupTableAndWalls(scene, world) {
   }
 
   const mapX = cX => ((cX / size.width) - 0.5) * tableLength;
-  const mapZ = cY => (0.5 - cY / size.height) * tableWidth;
+  const mapZ = cY => (cY / size.height - 0.5) * tableWidth;
+
   const chipSlots = {};
   for (const [key, a] of Object.entries(areas)) {
     const cx = a.x + a.w / 2;
