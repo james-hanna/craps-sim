@@ -78,16 +78,18 @@ function createCrapsLayoutTexture() {
   const comeW = 350;
   const comeH = 200;
   const dontH = 80;
-  const spacingX = 50;
+  const spacingX = 80; // add more horizontal gap between boxes
   const startX = (canvas.width - (comeW * 3 + spacingX * 2)) / 2;
-  const baseY = 820;
-  const rowSpacing = 280;
+  const baseY = 760; // move rows slightly upward
+  const rowSpacing = 320; // a bit more vertical spacing
+
   points.forEach((p, i) => {
     const row = Math.floor(i / 3);
     const col = i % 3;
     const x = startX + col * (comeW + spacingX);
     const comeY = baseY + row * rowSpacing;
-    const dontY = comeY - dontH - 20;
+    const dontY = comeY - dontH - 40; // extra gap from don't come box
+
     areas[`come${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
     areas[`dontCome${p}`] = { x, y: dontY, w: comeW, h: dontH, label: `DC ${p}` };
     areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
@@ -97,7 +99,8 @@ function createCrapsLayoutTexture() {
   const hwH = 200;
   const hwSpacing = 60;
   const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
-  const hwStartY = 300;
+  const hwStartY = 220; // move hardways slightly toward top
+
   areas.hard4 = { x: hwStartX, y: hwStartY, w: hwW, h: hwH, label: 'HARD 4' };
   areas.hard6 = { x: hwStartX + hwW + hwSpacing, y: hwStartY, w: hwW, h: hwH, label: 'HARD 6' };
   areas.hard8 = { x: hwStartX, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 8' };

@@ -45,6 +45,7 @@ export function placeDontPass(amount) {
   if (player.balance < amount) return;
   player.balance -= amount;
   player.dontPass += amount;
+
   updateBalanceDisplay();
   updateAllBetChips();
 }
@@ -81,6 +82,7 @@ export function placeNumberBet(number, amount) {
   updateBalanceDisplay();
   updateAllBetChips();
 }
+
 
 export function placeOdds(type, point, amount) {
   if (player.balance < amount) return;
@@ -142,7 +144,6 @@ export function updateAllBetChips() {
       addChips(amt, slots[`place${n}`]);
     }
   });
-
   player.dontComeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);
     const key = b.point ? `dontCome${b.point}` : 'dontCome';

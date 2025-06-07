@@ -24,7 +24,6 @@ export function updateBalanceDisplay() {
     player.lineOdds ? `Odds: $${player.lineOdds}` : null,
     player.dontPass ? `Don't Pass: $${player.dontPass}` : null,
     player.fieldBet ? `Field: $${player.fieldBet}` : null,
-
     comeTotal ? `Come: $${comeTotal}` : null,
     placeTotal ? `Place: $${placeTotal}` : null,
 

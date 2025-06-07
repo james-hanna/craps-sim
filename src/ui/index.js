@@ -13,7 +13,6 @@ export function setupUI({
   onOddsLine,
   onHardway,
   onPlaceBet
-
 }) {
   // Main UI panel
   uiPanel = document.createElement('div');
@@ -58,7 +57,6 @@ export function setupUI({
   makeBtn("Don't Come", onDontCome);
   makeBtn('Field', onFieldBet);
   makeBtn('Pass Odds', amt => onOddsLine(amt));
-
 
   const placeContainer = document.createElement('div');
   placeContainer.id = 'place-container';
