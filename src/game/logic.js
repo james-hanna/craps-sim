@@ -27,13 +27,13 @@ export function checkRoll(dice) {
       if (gameState.phase === 'comeOut') {
         if (total === 7 || total === 11) {
           message = `🎯 You rolled ${total} — Natural! You win!`;
-          player.balance += player.currentBet * 2;
-          player.currentBet = 0;
+          player.balance += player.lineBet * 2;
+          player.lineBet = 0;
           gameState.canBet = true;
           clearChips();
         } else if ([2, 3, 12].includes(total)) {
           message = `💀 You rolled ${total} — Craps! You lose.`;
-          player.currentBet = 0;
+          player.lineBet = 0;
           gameState.canBet = true;
           clearChips();
         } else {
@@ -45,15 +45,15 @@ export function checkRoll(dice) {
       } else if (gameState.phase === 'point') {
         if (total === gameState.point) {
           message = `🎉 You hit the point (${total}) — You win!`;
-          player.balance += player.currentBet * 2;
-          player.currentBet = 0;
+          player.balance += player.lineBet * 2;
+          player.lineBet = 0;
           gameState.phase = 'comeOut';
           gameState.point = null;
           gameState.canBet = true;
           clearChips();
         } else if (total === 7) {
           message = `💥 You rolled a 7 before the point — You lose.`;
-          player.currentBet = 0;
+          player.lineBet = 0;
           gameState.phase = 'comeOut';
           gameState.point = null;
           gameState.canBet = true;
