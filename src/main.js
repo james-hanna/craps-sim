@@ -20,6 +20,7 @@ import {
   placeOdds,
   placeHardway
 } from './betting/index.js';
+
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
@@ -32,6 +33,7 @@ const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
 setupUI({
   onRollDice: spawnDice,
+
   onLineBet: (amount) => placeBet(amount, playerX, throwZ, scene),
   onComeBet: (amount) => placeComeBet(amount),
   onDontPass: (amount) => placeDontPass(amount),

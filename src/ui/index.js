@@ -13,6 +13,7 @@ export function setupUI({
   onOddsLine,
   onHardway
 }) {
+
   // Main UI panel
   uiPanel = document.createElement('div');
   uiPanel.id = 'ui-panel';
