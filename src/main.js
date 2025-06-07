@@ -21,6 +21,7 @@ import {
   placeOdds,
   placeHardway,
   placeNumberBet
+
 } from './betting/index.js';
 import { setupUI } from './ui/index.js';
 import { checkRoll } from './logic/rollHandler.js';

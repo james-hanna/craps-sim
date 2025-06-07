@@ -136,11 +136,13 @@ export function updateAllBetChips() {
     const key = b.point ? `come${b.point}` : 'come';
     if (total > 0 && slots[key]) addChips(total, slots[key]);
   });
+
   Object.entries(player.placeBets).forEach(([n, amt]) => {
     if (amt > 0 && slots[`place${n}`]) {
       addChips(amt, slots[`place${n}`]);
     }
   });
+
   player.dontComeBets.forEach(b => {
     const total = b.amount + (b.odds || 0);
     const key = b.point ? `dontCome${b.point}` : 'dontCome';

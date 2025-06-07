@@ -102,7 +102,6 @@ function createCrapsLayoutTexture() {
   areas.hard6 = { x: hwStartX + hwW + hwSpacing, y: hwStartY, w: hwW, h: hwH, label: 'HARD 6' };
   areas.hard8 = { x: hwStartX, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 8' };
   areas.hard10 = { x: hwStartX + hwW + hwSpacing, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 10' };
-
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';
