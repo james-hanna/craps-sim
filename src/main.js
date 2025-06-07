@@ -62,6 +62,7 @@ function onPointerDown(event) {
 
 renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
+
 let playerX = 0;
 let dice = [];
 let waitingForRollToSettle = false;
