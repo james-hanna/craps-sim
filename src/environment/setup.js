@@ -4,6 +4,7 @@ import { World, Body, Box, Vec3, Material, ContactMaterial } from 'cannon-es';
 
 export const diceMaterial = new Material('dice');
 export const tableMaterial = new Material('table');
+export const chipMaterial = new Material('chip');
 
 export function setupSceneAndRenderer() {
   const scene = new THREE.Scene();
@@ -43,11 +44,29 @@ export function setupPhysicsWorld() {
   const world = new World();
   world.gravity.set(0, -30, 0);
 
-  const contactMaterial = new ContactMaterial(diceMaterial, tableMaterial, {
+  const diceTable = new ContactMaterial(diceMaterial, tableMaterial, {
     friction: 0.5,
     restitution: 0.25,
   });
-  world.addContactMaterial(contactMaterial);
+  world.addContactMaterial(diceTable);
+
+  const chipTable = new ContactMaterial(chipMaterial, tableMaterial, {
+    friction: 0.6,
+    restitution: 0.1,
+  });
+  world.addContactMaterial(chipTable);
+
+  const diceChip = new ContactMaterial(diceMaterial, chipMaterial, {
+    friction: 0.6,
+    restitution: 0.2,
+  });
+  world.addContactMaterial(diceChip);
+
+  const chipChip = new ContactMaterial(chipMaterial, chipMaterial, {
+    friction: 0.6,
+    restitution: 0.2,
+  });
+  world.addContactMaterial(chipChip);
 
   return world;
 }
@@ -81,21 +100,19 @@ function createCrapsLayoutTexture() {
   const spacingX = 80; // add more horizontal gap between boxes
   const startX = (canvas.width - (comeW * 3 + spacingX * 2)) / 2;
   const baseY = 760; // move rows slightly upward
-  const rowSpacing = 300; // a bit more vertical spacing
-
+  const rowSpacing = 320; // a bit more vertical spacing
   points.forEach((p, i) => {
     const row = Math.floor(i / 3);
     const col = i % 3;
     const x = startX + col * (comeW + spacingX);
     const comeY = baseY + row * rowSpacing;
-    const dontY = comeY - dontH;
-
+    const dontY = comeY - dontH - 40; // extra gap from don't come box
     areas[`come${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
     areas[`dontCome${p}`] = { x, y: dontY, w: comeW, h: dontH, label: `DC ${p}` };
     areas[`place${p}`] = { x, y: comeY, w: comeW, h: comeH, label: `${p}` };
   });
 
-  const hwW = 300;
+  const hwW = 200;n
   const hwH = 200;
   const hwSpacing = 60;
   const hwStartX = (canvas.width - (hwW * 2 + hwSpacing)) / 2;
@@ -105,6 +122,7 @@ function createCrapsLayoutTexture() {
   areas.hard6 = { x: hwStartX + hwW + hwSpacing, y: hwStartY, w: hwW, h: hwH, label: 'HARD 6' };
   areas.hard8 = { x: hwStartX, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 8' };
   areas.hard10 = { x: hwStartX + hwW + hwSpacing, y: hwStartY + hwH + 20, w: hwW, h: hwH, label: 'HARD 10' };
+
   ctx.font = '48px Arial';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffffff';

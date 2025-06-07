@@ -23,6 +23,9 @@ import {
   placeNumberBet
 } from './betting/index.js';
 import { setupUI } from './ui/index.js';
+
+import { getChipMeshes, handleChipClick, updateChipMeshes } from './betting/index.js';
+
 import { checkRoll } from './logic/rollHandler.js';
 import { player, gameState } from './state/player.js';
 import { displayMessage } from './ui/message.js';
@@ -32,7 +35,9 @@ const world = setupPhysicsWorld();
 const { tableWidth, chipSlots } = setupTableAndWalls(scene, world);
 const throwZ = tableWidth / 2 - 4;
 initControls(camera, renderer);
-initBetting(scene, chipSlots);
+
+initBetting(scene, chipSlots, world);
+
 setupUI({
   onRollDice: spawnDice,
   onLineBet: (amount) => placeBet(amount),
@@ -44,6 +49,20 @@ setupUI({
   onHardway: (number, amount) => placeHardway(number, amount),
   onPlaceBet: (number, amount) => placeNumberBet(number, amount)
 });
+
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+window.addEventListener('pointerdown', (event) => {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersect = raycaster.intersectObjects(getChipMeshes());
+  if (intersect.length) {
+    handleChipClick(intersect[0].object);
+  }
+});
+
 
 let playerX = 0;
 let dice = [];
@@ -96,6 +115,7 @@ function animate() {
     die.mesh.position.copy(die.body.position);
     die.mesh.quaternion.copy(die.body.quaternion);
   });
+  updateChipMeshes();
 
   if (waitingForRollToSettle && checkRoll(dice)) {
     waitingForRollToSettle = false;
